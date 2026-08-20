@@ -1,31 +1,16 @@
 class Hand < Formula
   desc "Manage a fleet of coding agents"
   homepage "https://github.com/atqamz/hand"
-  version "0.4.0"
+  url "https://github.com/atqamz/hand/archive/refs/tags/v0.5.0.tar.gz"
+  sha256 "bb122f2129160c0568d331363c9c5249490553c8dde4909602c7023ab07e1418"
   license "MIT"
 
-  on_macos do
-    if Hardware::CPU.arm?
-      url "https://github.com/atqamz/hand/releases/download/v0.4.0/hand-darwin-arm64.tar.gz"
-      sha256 "4fff9708217907b0c26d2809156c716c44026e562769d0ef6339254f3e7ac23c"
-    else
-      url "https://github.com/atqamz/hand/releases/download/v0.4.0/hand-darwin-amd64.tar.gz"
-      sha256 "c231198d841fa3530f8f8f296d6e2ce0c991583235ae8a22628b224a22541227"
-    end
-  end
-
-  on_linux do
-    if Hardware::CPU.arm?
-      url "https://github.com/atqamz/hand/releases/download/v0.4.0/hand-linux-arm64.tar.gz"
-      sha256 "7a8743797a2b7c83595d45aa4c1bc7a93a519f0ac36ac289d5cffae2b2f4283c"
-    else
-      url "https://github.com/atqamz/hand/releases/download/v0.4.0/hand-linux-amd64.tar.gz"
-      sha256 "5c4ef9d2379969dc2b63de829f4b20707932833844fa4e51950411d94f8770a7"
-    end
-  end
+  depends_on "go" => :build
 
   def install
-    bin.install "hand"
+    commit = "81eb3e8d5a32c59f5d68e2605a9a09f9495a6a13"
+    ldflags = "-s -w -X main.version=#{version} -X main.channel=stable -X main.commit=#{commit} -X main.distribution=brew"
+    system "go", "build", *std_go_args(ldflags: ldflags)
   end
 
   test do
